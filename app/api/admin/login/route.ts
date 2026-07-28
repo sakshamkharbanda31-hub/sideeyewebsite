@@ -12,6 +12,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const parsed = loginSchema.safeParse(body);
+
     if (!parsed.success) {
       return NextResponse.json({ error: "Invalid input" }, { status: 400 });
     }
@@ -21,11 +22,26 @@ export async function POST(request: Request) {
     const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH;
 
     if (!adminUsername || !adminPasswordHash) {
+      console.log("ADMIN DEBUG", {
+        hasUsername: !!adminUsername,
+        hasHash: !!adminPasswordHash,
+      });
+
       return NextResponse.json(
         { error: "Admin auth is not configured" },
         { status: 503 }
       );
     }
+
+    console.log("ADMIN DEBUG", {
+      hasUsername: !!adminUsername,
+      adminUsername,
+      hasHash: !!adminPasswordHash,
+      hashStart: adminPasswordHash?.slice(0, 7),
+      hashLength: adminPasswordHash?.length,
+      inputUsername: username,
+      usernameMatches: username === adminUsername,
+    });
 
     if (username !== adminUsername) {
       return NextResponse.json(
@@ -35,6 +51,11 @@ export async function POST(request: Request) {
     }
 
     const passwordMatches = await bcrypt.compare(password, adminPasswordHash);
+
+    console.log("ADMIN DEBUG PASSWORD", {
+      passwordMatches,
+    });
+
     if (!passwordMatches) {
       return NextResponse.json(
         { error: "Invalid username or password" },
