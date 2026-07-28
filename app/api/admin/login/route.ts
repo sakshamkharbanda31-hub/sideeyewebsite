@@ -19,7 +19,7 @@ export async function POST(request: Request) {
 
     const { username, password } = parsed.data;
     const adminUsername = process.env.ADMIN_USERNAME;
-    const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH;
+    const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH_NEW;
 
     if (!adminUsername || !adminPasswordHash) {
       console.log("ADMIN DEBUG", {
