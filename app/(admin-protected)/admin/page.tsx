@@ -1,6 +1,14 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { getSession } from "@/lib/auth";
 
-export default function AdminDashboardPage() {
+export default async function AdminDashboardPage() {
+  const session = await getSession();
+
+  if (!session) {
+    redirect("/admin/login");
+  }
+
   return (
     <div className="grid gap-6 sm:grid-cols-2">
       <Link

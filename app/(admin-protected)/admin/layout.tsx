@@ -16,6 +16,10 @@ export default async function AdminLayout({
 }) {
   const session = await getSession();
 
+  if (!session) {
+    redirect("/admin/login");
+  }
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="flex flex-col gap-6 border-b border-black/10 pb-6 sm:flex-row sm:items-center sm:justify-between">
@@ -24,7 +28,7 @@ export default async function AdminLayout({
             Signed in as
           </p>
           <h1 className="mt-1 font-display text-2xl font-bold text-ink">
-            {session?.username}
+            {session.username}
           </h1>
         </div>
         <div className="flex items-center gap-6">
