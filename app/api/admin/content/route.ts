@@ -1,21 +1,17 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
-import { hasContentSession } from "@/lib/contentAuth";
 import { connectDB } from "@/lib/mongodb";
 import { PageContent } from "@/models/PageContent";
 
-async function requireContentAccess() {
+async function requireAdminSession() {
   const session = await getSession();
   if (!session) return { ok: false, status: 401 as const };
-
-  const hasAccess = await hasContentSession();
-  if (!hasAccess) return { ok: false, status: 403 as const };
 
   return { ok: true as const };
 }
 
 export async function GET(request: Request) {
-  const check = await requireContentAccess();
+  const check = await requireAdminSession();
   if (!check.ok) {
     return NextResponse.json({ error: "Unauthorized" }, { status: check.status });
   }
@@ -34,7 +30,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const check = await requireContentAccess();
+  const check = await requireAdminSession();
   if (!check.ok) {
     return NextResponse.json({ error: "Unauthorized" }, { status: check.status });
   }

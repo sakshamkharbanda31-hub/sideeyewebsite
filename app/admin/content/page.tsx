@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, Lock, CheckCircle2 } from "lucide-react";
+import { Loader2, CheckCircle2 } from "lucide-react";
 
 const PAGES = [
   { key: "home", label: "Homepage" },
@@ -16,85 +16,7 @@ const PAGES = [
 ];
 
 export default function AdminContentPage() {
-  const [checking, setChecking] = useState(true);
-  const [hasAccess, setHasAccess] = useState(false);
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [submitting, setSubmitting] = useState(false);
   const [selectedPage, setSelectedPage] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetch("/api/admin/content-auth")
-      .then((res) => res.json())
-      .then((data) => {
-        setHasAccess(!!data.hasAccess);
-        setChecking(false);
-      })
-      .catch(() => setChecking(false));
-  }, []);
-
-  const handleUnlock = async () => {
-    setError("");
-    setSubmitting(true);
-    try {
-      const res = await fetch("/api/admin/content-auth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || "Incorrect password");
-        setSubmitting(false);
-        return;
-      }
-      setHasAccess(true);
-      setSubmitting(false);
-    } catch {
-      setError("Network error. Try again.");
-      setSubmitting(false);
-    }
-  };
-
-  if (checking) {
-    return (
-      <div className="flex items-center gap-2 text-muted">
-        <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-        Checking access...
-      </div>
-    );
-  }
-
-  if (!hasAccess) {
-    return (
-      <div className="max-w-sm">
-        <div className="mb-4 flex items-center gap-2 text-ink">
-          <Lock className="h-5 w-5" aria-hidden />
-          <h2 className="font-display text-xl font-bold">Content Editor Locked</h2>
-        </div>
-        <p className="mb-4 text-sm text-muted">
-          Enter the content editor password to unlock editing for this session.
-        </p>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleUnlock()}
-          placeholder="Content editor password"
-          className="w-full border border-black/10 bg-surface px-4 py-3 text-sm text-ink outline-none focus:border-accent"
-        />
-        {error && <p className="mt-2 text-xs text-accent">{error}</p>}
-        <button
-          type="button"
-          onClick={handleUnlock}
-          disabled={submitting}
-          className="mt-4 inline-flex items-center gap-2 border border-ink-solid bg-ink-solid px-5 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60"
-        >
-          {submitting ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : "Unlock"}
-        </button>
-      </div>
-    );
-  }
 
   return (
     <div>
