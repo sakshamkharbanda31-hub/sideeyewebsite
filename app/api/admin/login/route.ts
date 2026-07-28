@@ -21,6 +21,14 @@ export async function POST(request: Request) {
     const adminUsername = process.env.ADMIN_USERNAME;
     const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH_NEW;
 
+console.log("ADMIN KEY CHECK", {
+  usingNewKey: !!process.env.ADMIN_PASSWORD_HASH_NEW,
+  newKeyStart: process.env.ADMIN_PASSWORD_HASH_NEW?.slice(0, 7),
+  newKeyLength: process.env.ADMIN_PASSWORD_HASH_NEW?.length,
+  oldKeyStart: process.env.ADMIN_PASSWORD_HASH?.slice(0, 7),
+  oldKeyLength: process.env.ADMIN_PASSWORD_HASH?.length,
+});
+
     if (!adminUsername || !adminPasswordHash) {
       console.log("ADMIN DEBUG", {
         hasUsername: !!adminUsername,
