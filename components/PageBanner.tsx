@@ -10,53 +10,48 @@ interface PageBannerProps {
 
 export default function PageBanner({
   src,
-  alt,
+  alt = "Page banner",
   caption,
   grayscale = false,
   asBackground = false,
 }: PageBannerProps) {
-  if (!src) return null;
+  // If src is missing, null, or empty string, render nothing safely
+  if (!src || typeof src !== "string" || src.trim() === "") {
+    return null;
+  }
 
   if (asBackground) {
     return (
-      <>
-        <div className="absolute inset-0">
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <div className={`relative h-full w-full ${grayscale ? "grayscale" : ""}`}>
           <Image
             src={src}
-            alt={alt || "Page background"}
+            alt={alt}
             fill
-            className={`object-cover ${grayscale ? "grayscale" : ""}`}
-            priority
+            className="object-cover opacity-30"
+            unoptimized
           />
-          <div className="absolute inset-0 bg-stone/75" />
         </div>
-        {caption && (
-          <p className="absolute bottom-4 right-4 z-10 font-mono text-[10px] uppercase tracking-wider text-muted">
-            {caption}
-          </p>
-        )}
-      </>
+      </div>
     );
   }
 
   return (
-    <section className="border-b border-black/10">
-      <div className="relative h-64 w-full overflow-hidden sm:h-80 lg:h-96">
+    <div className="relative w-full overflow-hidden rounded-2xl bg-neutral-900 my-6">
+      <div className={`relative h-48 sm:h-64 md:h-80 w-full ${grayscale ? "grayscale" : ""}`}>
         <Image
           src={src}
-          alt={alt || "Page banner"}
+          alt={alt}
           fill
-          className={`object-cover ${grayscale ? "grayscale" : ""}`}
-          priority
+          className="object-cover"
+          unoptimized
         />
-        {caption && (
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
-            <p className="font-mono text-xs uppercase tracking-wider text-white/90">
-              {caption}
-            </p>
-          </div>
-        )}
       </div>
-    </section>
+      {caption && (
+        <p className="p-3 text-center text-xs text-neutral-400 bg-neutral-900/80">
+          {caption}
+        </p>
+      )}
+    </div>
   );
 }
