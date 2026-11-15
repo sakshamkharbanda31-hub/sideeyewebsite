@@ -1,11 +1,21 @@
 import { NextResponse } from "next/server";
 import { writeFile, mkdir, unlink } from "fs/promises";
 import path from "path";
+import { revalidatePath } from "next/cache";
 import { getSession } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import { HeroVideo } from "@/models/HeroVideo";
 
 const KEY = "home-hero";
+
+// Increase the body-size limit for video uploads (default is too small for 50 MB files)
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "55mb",
+    },
+  },
+};
 
 export async function GET() {
   await connectDB();
@@ -62,6 +72,8 @@ export async function POST(request: Request) {
       { upsert: true, new: true }
     );
 
+    revalidatePath("/");
+
     return NextResponse.json({ success: true, videoPath });
   } catch (error) {
     console.error("Hero video upload error:", error);
@@ -85,6 +97,8 @@ export async function DELETE() {
     }
 
     await HeroVideo.deleteOne({ key: KEY });
+
+    revalidatePath("/");
 
     return NextResponse.json({ success: true });
   } catch (error) {

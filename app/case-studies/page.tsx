@@ -3,6 +3,8 @@ import SectionHeading from "@/components/SectionHeading";
 import FadeIn from "@/components/FadeIn";
 import { getPageContent } from "@/lib/getPageContent";
 import CaseStudyCard, { CaseStudy } from "@/components/CaseStudyCard";
+
+export const dynamic = "force-dynamic";
 export const metadata = createMetadata({
   title: "Case Studies - SideEye.in",
   description:

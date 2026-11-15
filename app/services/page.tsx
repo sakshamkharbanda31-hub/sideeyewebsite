@@ -9,6 +9,8 @@ import { getBanner } from "@/lib/getBanner";
 import { getPageContent } from "@/lib/getPageContent";
 import { renderHighlighted } from "@/lib/highlightText";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = createMetadata({
   title: "Engine 1: Services - SideEye.in",
   description:

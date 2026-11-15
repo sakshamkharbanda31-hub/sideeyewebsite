@@ -7,6 +7,8 @@ import { ArrowRight, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import TiltCard from "@/components/TiltCard";
 import { getPageContent } from "@/lib/getPageContent";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = createMetadata({
   title: "Contact - SideEye.in",
   description:

@@ -4,6 +4,8 @@ import FadeIn from "@/components/FadeIn";
 import Button from "@/components/Button";
 import { getPageContent } from "@/lib/getPageContent";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = createMetadata({
   title: "About - SideEye.in",
   description:

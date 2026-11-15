@@ -1,7 +1,19 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getSession } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import { PageContent } from "@/models/PageContent";
+
+// Revalidate all public pages that read from PageContent
+const PUBLIC_PATHS = [
+  "/",
+  "/services",
+  "/about",
+  "/tools",
+  "/case-studies",
+  "/faqs",
+  "/contact",
+];
 
 async function requireAdminSession() {
   const session = await getSession();
@@ -48,6 +60,11 @@ export async function POST(request: Request) {
     { pageKey, data },
     { upsert: true, new: true }
   );
+
+  // Revalidate all public pages that consume PageContent
+  for (const path of PUBLIC_PATHS) {
+    revalidatePath(path);
+  }
 
   return NextResponse.json({ success: true });
 }

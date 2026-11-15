@@ -10,12 +10,17 @@ import Marquee from "@/components/Marquee";
 import { ArrowRight } from "lucide-react";
 import PageBanner from "@/components/PageBanner";
 import { getBanner } from "@/lib/getBanner";
+import { getPageContent } from "@/lib/getPageContent";
+import { homeHeroDefaults } from "@/lib/homeHero";
+
+export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const homeBanner = await getBanner("home");
+  const heroContent = await getPageContent("home", homeHeroDefaults);
   return (
     <>
-      <HeroClient />
+      <HeroClient content={heroContent} />
 
       {/* Results Ticker */}
       <ResultsTicker />

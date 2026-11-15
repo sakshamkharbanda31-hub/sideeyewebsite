@@ -75,6 +75,7 @@ function HomeContentEditor() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState("");
   const [form, setForm] = useState({
     eyebrow: "An independent growth ecosystem - est. Gurugram",
     headline: "While Your Competitors Run $5 Ads, We Automate Their Market Share.",
@@ -121,6 +122,7 @@ function HomeContentEditor() {
   const handleSave = async () => {
     setSaving(true);
     setSaved(false);
+    setSaveError("");
     try {
       const res = await fetch("/api/admin/content", {
         method: "POST",
@@ -129,7 +131,12 @@ function HomeContentEditor() {
       });
       if (res.ok) {
         setSaved(true);
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setSaveError(data.error || `Save failed (${res.status})`);
       }
+    } catch {
+      setSaveError("Network error. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -259,6 +266,8 @@ function HomeContentEditor() {
         {videoError && <p className="mt-2 text-xs text-accent">{videoError}</p>}
       </div>
 
+      {saveError && <p className="text-xs text-accent">{saveError}</p>}
+
       <button
         type="button"
         onClick={handleSave}
@@ -284,6 +293,7 @@ function ResultsTickerContentEditor() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState("");
   const [metrics, setMetrics] = useState<string[]>([
     "Rs. 45M+ Pipeline Won",
     "1.2M+ Messages Delivered",
@@ -322,6 +332,7 @@ function ResultsTickerContentEditor() {
   const handleSave = async () => {
     setSaving(true);
     setSaved(false);
+    setSaveError("");
     try {
       const res = await fetch("/api/admin/content", {
         method: "POST",
@@ -329,6 +340,12 @@ function ResultsTickerContentEditor() {
         body: JSON.stringify({ pageKey: "results-ticker", data: { metrics } }),
       });
       if (res.ok) setSaved(true);
+      else {
+        const data = await res.json().catch(() => ({}));
+        setSaveError(data.error || `Save failed (${res.status})`);
+      }
+    } catch {
+      setSaveError("Network error. Please try again.");
     } finally {
       setSaving(false);
     }

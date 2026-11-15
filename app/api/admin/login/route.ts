@@ -19,7 +19,8 @@ export async function POST(request: Request) {
 
     const { username, password } = parsed.data;
     const adminUsername = process.env.ADMIN_USERNAME;
-    const adminPasswordHash = "$2b$10$sepHBhVM1irAtVsRiT/K/eKncPtmTNsf3nEXM6TRBxVj1swfWLslu";
+    // Read the hash from environment — never hardcode it in source
+    const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH;
 
     if (!adminUsername || !adminPasswordHash) {
       return NextResponse.json(

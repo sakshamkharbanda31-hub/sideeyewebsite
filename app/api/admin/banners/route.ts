@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { writeFile, mkdir, unlink } from "fs/promises";
 import path from "path";
+import { revalidatePath } from "next/cache";
 import { getSession } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import { Banner } from "@/models/Banner";
@@ -15,7 +16,24 @@ const VALID_PAGE_KEYS = [
   "home",
 ];
 
+// Map each pageKey to the public path(s) that display its banner
+const PAGE_KEY_TO_PATHS: Record<string, string[]> = {
+  home: ["/"],
+  services: ["/services"],
+  tools: ["/tools"],
+  about: ["/about"],
+  "case-studies": ["/case-studies"],
+  faqs: ["/faqs"],
+  contact: ["/contact"],
+};
+
 export async function GET() {
+  // Guard: only logged-in admins should fetch the full banner list
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   await connectDB();
   const banners = await Banner.find({}).lean();
   return NextResponse.json({ banners: JSON.parse(JSON.stringify(banners)) });
@@ -66,6 +84,12 @@ export async function POST(request: Request) {
       { upsert: true, new: true }
     );
 
+    // Revalidate the public page(s) that show this banner
+    const paths = PAGE_KEY_TO_PATHS[pageKey] ?? [];
+    for (const p of paths) {
+      revalidatePath(p);
+    }
+
     return NextResponse.json({ success: true, imagePath });
   } catch (error) {
     console.error("Banner upload error:", error);
@@ -96,6 +120,12 @@ export async function DELETE(request: Request) {
     }
 
     await Banner.deleteOne({ pageKey });
+
+    // Revalidate the public page(s) that show this banner
+    const paths = PAGE_KEY_TO_PATHS[pageKey] ?? [];
+    for (const p of paths) {
+      revalidatePath(p);
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {

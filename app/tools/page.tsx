@@ -5,6 +5,8 @@ import PageBanner from "@/components/PageBanner";
 import { getBanner } from "@/lib/getBanner";
 import { getPageContent } from "@/lib/getPageContent";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = createMetadata({
   title: "Engine 2: WhatsApp Marketing Suite — SideEye.in",
   description:

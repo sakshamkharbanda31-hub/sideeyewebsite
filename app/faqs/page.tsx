@@ -4,6 +4,8 @@ import FadeIn from "@/components/FadeIn";
 import Accordion from "@/components/Accordion";
 import AgencyBingoTrigger from "@/components/AgencyBingoTrigger";
 import { getPageContent } from "@/lib/getPageContent";
+
+export const dynamic = "force-dynamic";
 export const metadata = createMetadata({
   title: "FAQs — SideEye.in",
   description:
